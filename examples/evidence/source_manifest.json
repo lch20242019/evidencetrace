@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "source_id": "src_benchmark_2026",
+      "url": "https://fixtures.evidencetrace.invalid/nimbus/benchmark-2026",
+      "available": true,
+      "locator": "Benchmark report > Results",
+      "content": "Nimbus completed 62% of the 200 tasks in the locked evaluation set."
+    },
+    {
+      "source_id": "src_release_v1_3",
+      "url": "https://fixtures.evidencetrace.invalid/nimbus/releases/v1.3",
+      "available": true,
+      "locator": "Release notes > Nimbus v1.3",
+      "content": "Durable checkpoints are available starting with Nimbus v1.3."
+    },
+    {
+      "source_id": "src_ownership",
+      "url": "https://fixtures.evidencetrace.invalid/nimbus/ownership",
+      "available": true,
+      "locator": "Service registry > Owner",
+      "content": "The Orion team owns and maintains the Nimbus runtime in the ownership registry."
+    },
+    {
+      "source_id": "src_readiness",
+      "url": "https://fixtures.evidencetrace.invalid/nimbus/readiness",
+      "available": true,
+      "locator": "Preview notice > Limitations",
+      "content": "Nimbus is an experimental preview for Linux test environments and is not approved for regulated production workloads."
+    },
+    {
+      "source_id": "src_launch",
+      "url": "https://fixtures.evidencetrace.invalid/nimbus/launch",
+      "available": true,
+      "locator": "Launch record > General availability",
+      "content": "Nimbus became generally available on 2025-04-18."
+    },
+    {
+      "source_id": "src_storage",
+      "url": "https://fixtures.evidencetrace.invalid/nimbus/storage",
+      "available": true,
+      "locator": "Operations guide > Storage requirements",
+      "content": "Durable runs require a supported SQL database."
+    },
+    {
+      "source_id": "src_retries",
+      "url": "https://fixtures.evidencetrace.invalid/nimbus/retries",
+      "available": true,
+      "locator": "Retry guide > Failure handling",
+      "content": "Nimbus retries failed tasks with exponential backoff in a single region."
+    },
+    {
+      "source_id": "src_missing_latency",
+      "url": "https://fixtures.evidencetrace.invalid/nimbus/missing-latency-study",
+      "available": false,
+      "error": "The fixture intentionally has no cached content."
+    },
+    {
+      "source_id": "src_cache_schedule",
+      "url": "https://fixtures.evidencetrace.invalid/cache/schedule",
+      "available": true,
+      "locator": "Change calendar > Cache migration",
+      "content": "The cache migration starts on 2026-08-04 with a two-hour maintenance window."
+    },
+    {
+      "source_id": "src_cache_retention",
+      "url": "https://fixtures.evidencetrace.invalid/cache/retention",
+      "available": true,
+      "locator": "Data policy > Retention",
+      "content": "Cache records retain the existing 30-day expiration during migration."
+    },
+    {
+      "source_id": "src_runtime_bundle",
+      "url": "https://fixtures.evidencetrace.invalid/runtime/capacity",
+      "available": true,
+      "locator": "Capacity report > Baseline",
+      "content": "The worker pool processes 4,000 jobs per hour, with a p95 queue delay of 18 seconds."
+    }
+  ],
+  "search_results": [
+    {
+      "query": "The cache migration starts on 2026-08-04 with a two-hour maintenance window.",
+      "results": [
+        {
+          "url": "https://fixtures.evidencetrace.invalid/cache/schedule",
+          "snippet": "UNTRUSTED-SNIPPET-ONLY: candidate selection text is not evidence."
+        }
+      ]
+    }
+  ]
+}

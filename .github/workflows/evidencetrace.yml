@@ -1,0 +1,115 @@
+name: EvidenceTrace
+
+on:
+  pull_request:
+    paths:
+      - "**/*.md"
+  workflow_call:
+    inputs:
+      path:
+        description: Repository-relative Markdown file to audit
+        required: false
+        type: string
+        default: README.md
+      sarif_path:
+        description: Repository-relative SARIF output path
+        required: false
+        type: string
+        default: evidencetrace.sarif
+      model:
+        description: OpenAI-compatible model id
+        required: false
+        type: string
+        default: ""
+    secrets:
+      OPENAI_API_KEY:
+        required: false
+      OPENAI_BASE_URL:
+        required: false
+      TAVILY_API_KEY:
+        required: false
+  workflow_dispatch:
+    inputs:
+      path:
+        description: Repository-relative Markdown file to audit
+        required: true
+        type: string
+        default: README.md
+      sarif_path:
+        description: Repository-relative SARIF output path
+        required: true
+        type: string
+        default: evidencetrace.sarif
+      model:
+        description: OpenAI-compatible model id
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  factual-citation-audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    env:
+      AUDIT_PATH: ${{ inputs.path || 'README.md' }}
+      SARIF_PATH: ${{ inputs.sarif_path || 'evidencetrace.sarif' }}
+      EVIDENCETRACE_MODEL: ${{ inputs.model || vars.EVIDENCETRACE_MODEL }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install EvidenceTrace
+        run: python -m pip install .
+
+      - name: Run EvidenceTrace
+        id: check
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          evidencetrace check "$AUDIT_PATH" \
+            --discover \
+            --model "$EVIDENCETRACE_MODEL" \
+            --sarif "$SARIF_PATH" 2>&1 | tee evidencetrace-summary.txt
+          status=${PIPESTATUS[0]}
+          printf 'exit_code=%s\n' "$status" >> "$GITHUB_OUTPUT"
+          if [[ -f "$SARIF_PATH" ]]; then
+            printf 'sarif_created=true\n' >> "$GITHUB_OUTPUT"
+          else
+            printf 'sarif_created=false\n' >> "$GITHUB_OUTPUT"
+          fi
+          {
+            printf '## EvidenceTrace\n\n'
+            printf 'Exit code: `%s`\n\n```\n' "$status"
+            cat evidencetrace-summary.txt
+            printf '```\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Upload SARIF
+        if: ${{ always() && steps.check.outputs.sarif_created == 'true' }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ env.SARIF_PATH }}
+
+      - name: Preserve EvidenceTrace exit status
+        if: >-
+          ${{ always() &&
+              steps.check.outputs.exit_code != '' &&
+              steps.check.outputs.exit_code != '0' }}
+        shell: bash
+        run: exit "${{ steps.check.outputs.exit_code }}"

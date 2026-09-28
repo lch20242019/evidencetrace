@@ -1,0 +1,2 @@
+"""Safe citation retrieval components."""
+
